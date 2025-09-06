@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog App Login</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .login-btn { display: inline-block; background-color: #4285F4; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background-color 0.3s; }
+        .login-btn:hover { background-color: #357ae8; }
+        .profile-link { font-size: 1.2em; color: #1a73e8; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <% if (user) { %>
+            <h1>Welcome back, <%= user.displayName %>!</h1>
+            <a href="/profile" class="profile-link">Go to Your Profile</a>
+        <% } else { %>
+            <h1>Blog Application</h1>
+            <p>Please log in to continue.</p>
+            <a href="/auth/google" class="login-btn">Login with Google</a>
+        <% } %>
+    </div>
+</body>
+</html>

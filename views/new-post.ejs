@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Post</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --background-color: #f8f9fa;
+            --card-background-color: #ffffff;
+            --text-color: #212529;
+            --subtle-text-color: #6c757d;
+            --border-color: #dee2e6;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--background-color); 
+            color: var(--text-color); 
+            margin: 0;
+        }
+        .navbar { 
+            background: var(--card-background-color); 
+            padding: 10px 30px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); }
+        .user-profile { display: flex; align-items: center; }
+        .user-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
+        .user-profile span { font-weight: 500; }
+        .user-profile a { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
+        .container { max-width: 800px; margin: 40px auto; padding: 30px; background: var(--card-background-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 1.1em; }
+        .form-group input, .form-group textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 1em; 
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        .form-group textarea { min-height: 250px; resize: vertical; }
+        .form-actions { display: flex; align-items: center; }
+        .btn-submit { background-color: var(--primary-color); color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; font-size: 1em; transition: background-color 0.2s; }
+        .btn-submit:hover { background-color: var(--primary-hover-color); }
+        .btn-cancel { color: var(--subtle-text-color); text-decoration: none; margin-left: 20px; font-weight: 500; }
+        .btn-cancel:hover { color: var(--text-color); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Blog Platform</div>
+        <% if (user) { %>
+            <div class="user-profile">
+                <img src="<%= user.profilePictureUrl %>" alt="Profile Picture">
+                <span><%= user.displayName %></span>
+                <a href="/logout">Logout</a>
+            </div>
+        <% } %>
+    </nav>
+
+    <div class="container">
+        <h1>Create New Post</h1>
+        <form action="/posts" method="POST">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Publish Post</button>
+                <a href="/dashboard" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+

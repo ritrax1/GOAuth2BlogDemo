@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --background-color: #f8f9fa;
+            --card-background-color: #ffffff;
+            --text-color: #212529;
+            --subtle-text-color: #6c757d;
+            --border-color: #dee2e6;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--background-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            line-height: 1.6;
+        }
+        .navbar { 
+            background: var(--card-background-color); 
+            padding: 10px 30px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); }
+        .user-profile { display: flex; align-items: center; }
+        .user-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
+        .user-profile span { font-weight: 500; }
+        .user-profile a { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
+        .user-profile a:hover { color: var(--primary-color); }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .btn-create { background-color: var(--primary-color); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s; }
+        .btn-create:hover { background-color: var(--primary-hover-color); }
+        .post-card { background: var(--card-background-color); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 25px; padding: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .post-author { display: flex; align-items: center; }
+        .post-author img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; }
+        .post-author-info { display: flex; flex-direction: column; }
+        .post-author-info span { font-weight: 600; }
+        .post-author-info time { font-size: 0.85em; color: var(--subtle-text-color); }
+        .post-actions a, .post-actions button { font-size: 0.9em; color: var(--subtle-text-color); background: none; border: none; cursor: pointer; margin-left: 10px; font-weight: 500; }
+        .post-actions a:hover, .post-actions button:hover { color: var(--primary-color); }
+        .post-content h2 { margin-top: 0; font-size: 1.75em; }
+        .post-content p { color: #495057; }
+        .post-footer { margin-top: 20px; border-top: 1px solid #e9ecef; padding-top: 20px; }
+        .like-button { display: inline-flex; align-items: center; background-color: #f0f2f5; border: 1px solid transparent; border-radius: 20px; padding: 5px 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .like-button.liked { background-color: #e7f3ff; color: var(--primary-color); }
+        .like-button:hover { background-color: #e9ecef; }
+        .like-button.liked:hover { background-color: #d0e7ff; }
+        .comments-section { margin-top: 20px; }
+        .comments-section h4 { margin-top: 0; margin-bottom: 15px; }
+        .comment { display: flex; margin-bottom: 15px; }
+        .comment-author img { width: 36px; height: 36px; border-radius: 50%; margin-right: 12px; }
+        .comment-content { background: #f8f9fa; padding: 10px 15px; border-radius: 18px; width: 100%; }
+        .comment-content strong { display: block; font-size: 0.9em; }
+        .comment-form { display: flex; margin-top: 15px; }
+        .comment-form input { flex-grow: 1; border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; background-color: #f0f2f5; }
+        .comment-form input:focus { outline: none; border-color: var(--primary-color); }
+        .comment-form button { background: var(--primary-color); color: white; border: none; border-radius: 8px; padding: 10px 15px; margin-left: 10px; cursor: pointer; transition: background-color 0.2s; }
+        .comment-form button:hover { background-color: var(--primary-hover-color); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">GOAuth2.0 Blog Demo</div>
+        <% if (user) { %>
+            <div class="user-profile">
+                <img src="<%= user.profilePictureUrl %>" alt="Profile Picture">
+                <span>Hello, <%= user.displayName %></span>
+                <a href="/logout">Logout</a>
+            </div>
+        <% } %>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Home</h1>
+            <a href="/posts/new" class="btn-create">Create New Post</a>
+        </div>
+
+        <% posts.forEach(post => { %>
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-author">
+                        <% if (post.author) { %>
+                            <img src="<%= post.author.profilePictureUrl %>" alt="Author">
+                            <div class="post-author-info">
+                                <span><%= post.author.displayName %></span>
+                                <time><%= new Date(post.createdAt).toLocaleString() %></time>
+                            </div>
+                        <% } else { %>
+                            <span>[Deleted User]</span>
+                        <% } %>
+                    </div>
+                    <% if (user && post.author && post.author._id.equals(user._id)) { %>
+                        <div class="post-actions">
+                            <a href="/posts/<%= post._id %>/edit">Edit</a>
+                            <form action="/posts/<%= post._id %>/delete" method="POST" style="display: inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="post-content">
+                    <h2><%= post.title %></h2>
+                    <p><%- post.content.replace(/\n/g, '<br>') %></p>
+                </div>
+
+                <div class="post-footer">
+                     <% const hasLiked = post.likes && post.likes.some(likeId => likeId.equals(user._id)); %>
+                     <form action="/posts/<%= post._id %>/like" method="POST" style="display: inline;">
+                         <button type="submit" class="like-button <%= hasLiked ? 'liked' : '' %>">
+                             👍 Like (<%= post.likes ? post.likes.length : 0 %>)
+                         </button>
+                     </form>
+
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <% post.comments.forEach(comment => { %>
+                            <div class="comment">
+                                <% if (comment.author) { %>
+                                <div class="comment-author">
+                                    <img src="<%= comment.author.profilePictureUrl %>" alt="Commenter">
+                                </div>
+                                <div class="comment-content">
+                                    <strong><%= comment.author.displayName %></strong>
+                                    <span><%= comment.text %></span>
+                                </div>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                        <form class="comment-form" action="/posts/<%= post._id %>/comments" method="POST">
+                            <input type="text" name="comment" placeholder="Write a comment..." required>
+                            <button type="submit">Post</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</body>
+</html>
+
