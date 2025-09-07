@@ -16,7 +16,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Use secure cookies in production
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
