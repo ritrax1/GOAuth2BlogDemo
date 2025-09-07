@@ -32,11 +32,11 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); }
+        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); text-decoration: none; }
         .user-profile { display: flex; align-items: center; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
         .user-profile span { font-weight: 500; }
-        .user-profile a { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
+        .user-profile .logout-link { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
         .container { max-width: 800px; margin: 40px auto; padding: 30px; background: var(--card-background-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 25px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 1.1em; }
@@ -64,12 +64,12 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-brand">Blog Platform</div>
+        <a href="/dashboard" class="navbar-brand">Blog Platform</a>
         <% if (user) { %>
             <div class="user-profile">
                 <img src="<%= user.profilePictureUrl %>" alt="Profile Picture">
                 <span><%= user.displayName %></span>
-                <a href="/logout">Logout</a>
+                <a href="/logout" class="logout-link">Logout</a>
             </div>
         <% } %>
     </nav>
@@ -93,4 +93,3 @@
     </div>
 </body>
 </html>
-

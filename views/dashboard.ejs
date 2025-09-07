@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Dashboard</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -33,12 +33,12 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); }
+        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); text-decoration: none; }
         .user-profile { display: flex; align-items: center; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
         .user-profile span { font-weight: 500; }
-        .user-profile a { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
-        .user-profile a:hover { color: var(--primary-color); }
+        .user-profile .logout-link { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
+        .user-profile .logout-link:hover { color: var(--primary-color); }
         .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .btn-create { background-color: var(--primary-color); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s; }
@@ -74,12 +74,12 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-brand">GOAuth2.0 Blog Demo</div>
+        <a href="/dashboard" class="navbar-brand">Blog Platform</a>
         <% if (user) { %>
             <div class="user-profile">
                 <img src="<%= user.profilePictureUrl %>" alt="Profile Picture">
                 <span>Hello, <%= user.displayName %></span>
-                <a href="/logout">Logout</a>
+                <a href="/logout" class="logout-link">Logout</a>
             </div>
         <% } %>
     </nav>
@@ -129,19 +129,21 @@
 
                     <div class="comments-section">
                         <h4>Comments</h4>
-                        <% post.comments.forEach(comment => { %>
-                            <div class="comment">
-                                <% if (comment.author) { %>
-                                <div class="comment-author">
-                                    <img src="<%= comment.author.profilePictureUrl %>" alt="Commenter">
+                        <% if(post.comments && post.comments.length > 0) { %>
+                            <% post.comments.forEach(comment => { %>
+                                <div class="comment">
+                                    <% if (comment.author) { %>
+                                        <div class="comment-author">
+                                            <img src="<%= comment.author.profilePictureUrl %>" alt="Commenter">
+                                        </div>
+                                        <div class="comment-content">
+                                            <strong><%= comment.author.displayName %></strong>
+                                            <span><%= comment.text %></span>
+                                        </div>
+                                    <% } %>
                                 </div>
-                                <div class="comment-content">
-                                    <strong><%= comment.author.displayName %></strong>
-                                    <span><%= comment.text %></span>
-                                </div>
-                                <% } %>
-                            </div>
-                        <% }); %>
+                            <% }); %>
+                        <% } %>
                         <form class="comment-form" action="/posts/<%= post._id %>/comments" method="POST">
                             <input type="text" name="comment" placeholder="Write a comment..." required>
                             <button type="submit">Post</button>
@@ -153,4 +155,3 @@
     </div>
 </body>
 </html>
-
