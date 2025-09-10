@@ -9,6 +9,11 @@ const Post = require('./models/post.model');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  next();
+});
+
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,7 +24,7 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
-mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 10000 })
     .then(() => {
         console.log('MongoDB connected successfully.');
         app.listen(PORT, () => {
@@ -74,7 +79,8 @@ app.get('/auth/google/callback', async (req, res) => {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     const profile = userInfoResponse.data;
-    const originalPictureUrl = profile.picture.split('=')[0];
+    
+    const profilePictureUrl = profile.picture;
 
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
@@ -82,12 +88,14 @@ app.get('/auth/google/callback', async (req, res) => {
         googleId: profile.id, 
         displayName: profile.name, 
         email: profile.email, 
-        profilePictureUrl: originalPictureUrl
+        profilePictureUrl: profilePictureUrl 
       });
-    } else if (user.profilePictureUrl !== originalPictureUrl) {
-      user.profilePictureUrl = originalPictureUrl;
+    } else {
+      user.profilePictureUrl = profilePictureUrl;
+      user.displayName = profile.name;
       await user.save();
     }
+
     req.session.user = user;
     res.redirect('/dashboard');
   } catch (error) {
@@ -181,7 +189,8 @@ app.post('/posts/:id/like', isLoggedIn, async (req, res) => {
             post.likes.push(userId);
         }
         await post.save();
-        res.redirect('back');
+
+        res.redirect('/dashboard');
     } catch (error) {
         console.error("Error liking/unliking post:", error);
         res.redirect('/dashboard');
@@ -202,4 +211,3 @@ app.post('/posts/:id/comments', isLoggedIn, async (req, res) => {
         res.redirect('/dashboard');
     }
 });
-
