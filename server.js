@@ -7,6 +7,7 @@ const User = require('./models/user.model');
 const Post = require('./models/post.model');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
  app.use((req, res, next) => {
@@ -25,10 +26,10 @@ app.use(express.json());
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
@@ -80,7 +81,7 @@ connectDB();
 
  app.get('/auth/google/callback', handleAsync(async (req, res) => {
     const { code } = req.query;
-    
+
     if (!code) {
         console.error('No authorization code received');
         return res.redirect('/');
@@ -93,20 +94,20 @@ connectDB();
         redirect_uri: process.env.GOOGLE_REDIRECT_URI,
         grant_type: 'authorization_code',
     });
-    
+
     const { access_token } = tokenResponse.data;
     const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${access_token}` },
     });
-    
+
     const profile = userInfoResponse.data;
-    
+
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
-        user = await User.create({ 
-            googleId: profile.id, 
-            displayName: profile.name, 
-            email: profile.email, 
+        user = await User.create({
+            googleId: profile.id,
+            displayName: profile.name,
+            email: profile.email,
             profilePictureUrl: profile.picture
         });
     } else {
@@ -122,14 +123,14 @@ connectDB();
 
  app.get('/profile', isLoggedIn, handleAsync(async (req, res) => {
     const userId = req.session.user._id;
-    
+
      const userPostsCount = await Post.countDocuments({ author: userId });
-    
+
      const userPosts = await Post.find({ author: userId });
     const totalLikes = userPosts.reduce((sum, post) => sum + (post.likes ? post.likes.length : 0), 0);
-    
-    res.render('profile', { 
-        user: req.session.user, 
+
+    res.render('profile', {
+        user: req.session.user,
         postsCount: userPostsCount,
         totalLikes: totalLikes
     });
@@ -146,9 +147,9 @@ connectDB();
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
-        
-    res.render('dashboard', { 
-        user: req.session.user, 
+
+    res.render('dashboard', {
+        user: req.session.user,
         posts: posts,
         currentPage: page
     });
@@ -160,73 +161,73 @@ connectDB();
 
  app.post('/posts', isLoggedIn, handleAsync(async (req, res) => {
     const { title, content } = req.body;
-    
+
     if (!title?.trim() || !content?.trim()) {
         return res.status(400).send("Title and content are required.");
     }
-    
+
     await Post.create({
         title: title.trim(),
         content: content.trim(),
         author: req.session.user._id
     });
-    
+
     res.redirect('/dashboard');
 }));
 
  app.get('/posts/:id/edit', isLoggedIn, handleAsync(async (req, res) => {
     const post = await Post.findById(req.params.id);
-    
+
     if (!post) {
         return res.status(404).send("Post not found.");
     }
-    
+
     if (!post.author.equals(req.session.user._id)) {
         return res.status(403).send("You can only edit your own posts.");
     }
-    
+
     res.render('edit-post', { user: req.session.user, post });
 }));
 
  app.post('/posts/:id/update', isLoggedIn, handleAsync(async (req, res) => {
     const { title, content } = req.body;
-    
+
     if (!title?.trim() || !content?.trim()) {
         return res.status(400).send("Title and content are required.");
     }
-    
+
     const post = await Post.findById(req.params.id);
-    
+
     if (!post || !post.author.equals(req.session.user._id)) {
         return res.redirect('/dashboard');
     }
-    
-    await Post.findByIdAndUpdate(req.params.id, { 
-        title: title.trim(), 
-        content: content.trim() 
+
+    await Post.findByIdAndUpdate(req.params.id, {
+        title: title.trim(),
+        content: content.trim()
     });
-    
+
     res.redirect('/dashboard');
 }));
 
  app.post('/posts/:id/delete', isLoggedIn, handleAsync(async (req, res) => {
     const post = await Post.findById(req.params.id);
-    
+
     if (!post || !post.author.equals(req.session.user._id)) {
         return res.redirect('/dashboard');
     }
-    
+
     await Post.findByIdAndDelete(req.params.id);
     res.redirect('/dashboard');
 }));
 
  app.post('/api/posts/:id/like', isLoggedIn, handleAsync(async (req, res) => {
     const post = await Post.findById(req.params.id);
-    
+
     if (!post) {
         return res.status(404).json({ error: 'Post not found' });
     }
-    
+
     const userId = req.session.user._id;
     const likeIndex = post.likes.indexOf(userId);
     let liked = false;
@@ -237,22 +238,22 @@ connectDB();
         post.likes.push(userId);
         liked = true;
     }
-    
+
     await post.save();
-    
-    res.json({ 
+
+    res.json({
         liked: liked,
-        likeCount: post.likes.length 
+        likeCount: post.likes.length
     });
 }));
 
  app.post('/posts/:id/like', isLoggedIn, handleAsync(async (req, res) => {
     const post = await Post.findById(req.params.id);
-    
+
     if (!post) {
         return res.redirect('/dashboard');
     }
-    
+
     const userId = req.session.user._id;
     const likeIndex = post.likes.indexOf(userId);
 
@@ -261,44 +262,44 @@ connectDB();
     } else {
         post.likes.push(userId);
     }
-    
+
     await post.save();
     res.redirect('/dashboard');
 }));
 
  app.post('/posts/:id/comments', isLoggedIn, handleAsync(async (req, res) => {
     const { comment } = req.body;
-    
+
     if (!comment?.trim()) {
         return res.redirect('/dashboard');
     }
-    
+
     const post = await Post.findById(req.params.id);
-    
+
     if (!post) {
         return res.redirect('/dashboard');
     }
-    
+
     post.comments.push({
         text: comment.trim(),
         author: req.session.user._id
     });
-    
+
     await post.save();
     res.redirect('/dashboard');
 }));
 
  app.use((error, req, res, next) => {
     console.error('Error:', error);
-    
+
     if (error.name === 'ValidationError') {
         return res.status(400).send('Validation Error: ' + error.message);
     }
-    
+
     if (error.name === 'CastError') {
         return res.status(400).send('Invalid ID format');
     }
-    
+
     res.status(500).send('Something went wrong. Please try again.');
 });
 
