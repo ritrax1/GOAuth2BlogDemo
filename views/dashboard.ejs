@@ -406,7 +406,7 @@
                                 <img src="<%= post.author.profilePictureUrl %>" alt="Author">
                                 <div class="post-author-info">
                                     <span><%= post.author.displayName %></span><br>
-                                    <time><%= new Date(post.createdAt).toLocaleString() %></time>
+                                    <time><%= new Date(post.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) %></time>
                                 </div>
                             <% } else { %>
                                 <span>[Deleted User]</span>

@@ -306,6 +306,7 @@
         <div class="member-since">
             <h3>🌟 Member Since</h3>
             <p>Joined on <%= new Date(user.createdAt).toLocaleDateString('en-US', { 
+                timeZone: 'Asia/Kolkata',
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
