@@ -3,82 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard - GAuth2BlogDemo</title>
     <style>
-        :root {
-            --primary-color: #f55524;
-            --primary-hover-color: #cb5617;
-            --background-color: #dac1c1;
-            --card-background-color: #ffffff;
-            --text-color: #212529;
-            --subtle-text-color: #6c757d;
-            --border-color: #dee2e6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--background-color); 
-            color: var(--text-color); 
-            margin: 0; 
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            margin: 0;
             line-height: 1.6;
+            min-height: 100vh;
         }
-        .navbar { 
-            background: var(--card-background-color); 
-            padding: 10px 30px; 
-            border-bottom: 1px solid var(--border-color); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-        .navbar-brand { font-weight: 600; font-size: 1.5em; color: var(--text-color); text-decoration: none; }
-        .user-profile { display: flex; align-items: center; }
-        .user-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
-        .user-profile span { font-weight: 500; }
-        .user-profile .logout-link { text-decoration: none; color: var(--subtle-text-color); margin-left: 20px; font-weight: 500; }
-        .user-profile .logout-link:hover { color: var(--primary-color); }
-        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .btn-create { background-color: var(--primary-color); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s; }
-        .btn-create:hover { background-color: var(--primary-hover-color); }
-        .post-card { background: var(--card-background-color); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 25px; padding: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .post-author { display: flex; align-items: center; }
-        .post-author img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; }
-        .post-author-info { display: flex; flex-direction: column; }
-        .post-author-info span { font-weight: 600; }
-        .post-author-info time { font-size: 0.85em; color: var(--subtle-text-color); }
-        .post-actions a, .post-actions button { font-size: 0.9em; color: var(--subtle-text-color); background: none; border: none; cursor: pointer; margin-left: 10px; font-weight: 500; }
-        .post-actions a:hover, .post-actions button:hover { color: var(--primary-color); }
-        .post-content h2 { margin-top: 0; font-size: 1.75em; }
-        .post-content p { color: #495057; }
-        .post-footer { margin-top: 20px; border-top: 1px solid #e9ecef; padding-top: 20px; }
-        .like-button { display: inline-flex; align-items: center; background-color: #f0f2f5; border: 1px solid transparent; border-radius: 20px; padding: 5px 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .like-button.liked { background-color: #e7f3ff; color: var(--primary-color); }
-        .like-button:hover { background-color: #e9ecef; }
-        .like-button.liked:hover { background-color: #d0e7ff; }
-        .comments-section { margin-top: 20px; }
-        .comments-section h4 { margin-top: 0; margin-bottom: 15px; }
-        .comment { display: flex; margin-bottom: 15px; }
-        .comment-author img { width: 36px; height: 36px; border-radius: 50%; margin-right: 12px; }
-        .comment-content { background: #f8f9fa; padding: 10px 15px; border-radius: 18px; width: 100%; }
-        .comment-content strong { display: block; font-size: 0.9em; }
-        .comment-form { display: flex; margin-top: 15px; }
-        .comment-form input { flex-grow: 1; border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; background-color: #f0f2f5; }
-        .comment-form input:focus { outline: none; border-color: var(--primary-color); }
-        .comment-form button { background: var(--primary-color); color: white; border: none; border-radius: 8px; padding: 10px 15px; margin-left: 10px; cursor: pointer; transition: background-color 0.2s; }
-        .comment-form button:hover { background-color: var(--primary-hover-color); }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5em;
+            color: #2c3e50;
+            text-decoration: none;
+            background: linear-gradient(135deg, #ee4343, #ff7777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-profile span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .logout-link {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-link:hover {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ee4343, #ff7777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, #ee4343, #ff7777);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-create:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            margin-bottom: 30px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .post-author img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-author-info span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .post-author-info time {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .post-actions a,
+        .post-actions button {
+            color: #7f8c8d;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .post-actions a:hover,
+        .post-actions button:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .post-content h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .post-content p {
+            color: #5a6c7d;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .post-footer {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .like-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #ee4343;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .like-button:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .like-button.liked {
+            background: linear-gradient(135deg, #ee4343, #ff7777);
+            color: white;
+        }
+
+        .like-button.liked:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        }
+
+        .comments-section {
+            margin-top: 30px;
+        }
+
+        .comments-section h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .comment {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .comment-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-content {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 15px 20px;
+            border-radius: 18px;
+            flex-grow: 1;
+        }
+
+        .comment-content strong {
+            display: block;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .comment-content span {
+            color: #5a6c7d;
+            line-height: 1.5;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .comment-form input {
+            flex-grow: 1;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 50px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .comment-form input:focus {
+            outline: none;
+            border-color: #ee4343;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .comment-form button {
+            background: linear-gradient(135deg, #ee4343, #ff7777);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .comment-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            color: #95a5a6;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 25px;
+            }
+
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+
+            .post-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .comment-form {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/dashboard" class="navbar-brand">Blog Platform</a>
+        <a href="/dashboard" class="navbar-brand">GAuth2BlogDemo</a>
         <% if (user) { %>
             <div class="user-profile">
                 <img src="<%= user.profilePictureUrl %>" alt="Profile Picture">
-                <span>Hello, <%= user.displayName %></span>
+                <a href="/profile" style="text-decoration: none; color: #2c3e50; font-weight: 600;">Hello, <%= user.displayName %></a>
                 <a href="/logout" class="logout-link">Logout</a>
             </div>
         <% } %>
@@ -87,71 +394,137 @@
     <div class="container">
         <div class="dashboard-header">
             <h1>Home</h1>
-            <a href="/posts/new" class="btn-create">Create New Post</a>
+            <a href="/posts/new" class="btn-create">✨ Create New Post</a>
         </div>
 
-        <% posts.forEach(post => { %>
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-author">
-                        <% if (post.author) { %>
-                            <img src="<%= post.author.profilePictureUrl %>" alt="Author">
-                            <div class="post-author-info">
-                                <span><%= post.author.displayName %></span>
-                                <time><%= new Date(post.createdAt).toLocaleString() %></time>
+        <% if (posts && posts.length > 0) { %>
+            <% posts.forEach(post => { %>
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-author">
+                            <% if (post.author) { %>
+                                <img src="<%= post.author.profilePictureUrl %>" alt="Author">
+                                <div class="post-author-info">
+                                    <span><%= post.author.displayName %></span><br>
+                                    <time><%= new Date(post.createdAt).toLocaleString() %></time>
+                                </div>
+                            <% } else { %>
+                                <span>[Deleted User]</span>
+                            <% } %>
+                        </div>
+                        <% if (user && post.author && post.author._id.equals(user._id)) { %>
+                            <div class="post-actions">
+                                <a href="/posts/<%= post._id %>/edit">✏️ Edit</a>
+                                <form action="/posts/<%= post._id %>/delete" method="POST" style="display: inline;">
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')">🗑️ Delete</button>
+                                </form>
                             </div>
-                        <% } else { %>
-                            <span>[Deleted User]</span>
                         <% } %>
                     </div>
-                    <% if (user && post.author && post.author._id.equals(user._id)) { %>
-                        <div class="post-actions">
-                            <a href="/posts/<%= post._id %>/edit">Edit</a>
-                            <form action="/posts/<%= post._id %>/delete" method="POST" style="display: inline;">
-                                <button type="submit">Delete</button>
+
+                    <div class="post-content">
+                        <h2><%= post.title %></h2>
+                        <p><%- post.content.replace(/\n/g, '<br>') %></p>
+                    </div>
+
+                    <div class="post-footer">
+                        <% const hasLiked = post.likes && post.likes.some(likeId => likeId.equals(user._id)); %>
+                        <button type="button" class="like-button <%= hasLiked ? 'liked' : '' %>" 
+                                data-post-id="<%= post._id %>" 
+                                data-liked="<%= hasLiked %>">
+                            <span class="like-icon"><%= hasLiked ? '❤️' : '🤍' %></span>
+                            <span class="like-count"><%= post.likes ? post.likes.length : 0 %></span> 
+                            <span class="like-text"><%= post.likes && post.likes.length === 1 ? 'like' : 'likes' %></span>
+                        </button>
+
+                        <div class="comments-section">
+                            <h4>💬 Comments</h4>
+                            <% if(post.comments && post.comments.length > 0) { %>
+                                <% post.comments.forEach(comment => { %>
+                                    <div class="comment">
+                                        <% if (comment.author) { %>
+                                            <div class="comment-author">
+                                                <img src="<%= comment.author.profilePictureUrl %>" alt="Commenter">
+                                            </div>
+                                            <div class="comment-content">
+                                                <strong><%= comment.author.displayName %></strong>
+                                                <span><%= comment.text %></span>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% }); %>
+                            <% } %>
+                            <form class="comment-form" action="/posts/<%= post._id %>/comments" method="POST">
+                                <input type="text" name="comment" placeholder="Share your thoughts..." required>
+                                <button type="submit">Post</button>
                             </form>
                         </div>
-                    <% } %>
-                </div>
-
-                <div class="post-content">
-                    <h2><%= post.title %></h2>
-                    <p><%- post.content.replace(/\n/g, '<br>') %></p>
-                </div>
-
-                <div class="post-footer">
-                     <% const hasLiked = post.likes && post.likes.some(likeId => likeId.equals(user._id)); %>
-                     <form action="/posts/<%= post._id %>/like" method="POST" style="display: inline;">
-                         <button type="submit" class="like-button <%= hasLiked ? 'liked' : '' %>">
-                             👍 Like (<%= post.likes ? post.likes.length : 0 %>)
-                         </button>
-                     </form>
-
-                    <div class="comments-section">
-                        <h4>Comments</h4>
-                        <% if(post.comments && post.comments.length > 0) { %>
-                            <% post.comments.forEach(comment => { %>
-                                <div class="comment">
-                                    <% if (comment.author) { %>
-                                        <div class="comment-author">
-                                            <img src="<%= comment.author.profilePictureUrl %>" alt="Commenter">
-                                        </div>
-                                        <div class="comment-content">
-                                            <strong><%= comment.author.displayName %></strong>
-                                            <span><%= comment.text %></span>
-                                        </div>
-                                    <% } %>
-                                </div>
-                            <% }); %>
-                        <% } %>
-                        <form class="comment-form" action="/posts/<%= post._id %>/comments" method="POST">
-                            <input type="text" name="comment" placeholder="Write a comment..." required>
-                            <button type="submit">Post</button>
-                        </form>
                     </div>
                 </div>
+            <% }); %>
+        <% } else { %>
+            <div class="empty-state">
+                <h3>No posts yet!</h3>
+                <p>Be the first to share something amazing with the community.</p>
+                <a href="/posts/new" class="btn-create">Create Your First Post</a>
             </div>
-        <% }); %>
+        <% } %>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const likeButtons = document.querySelectorAll('.like-button');
+            
+            likeButtons.forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    const postId = this.dataset.postId;
+                    const isLiked = this.dataset.liked === 'true';
+                    
+                    // Disable button during request
+                    this.disabled = true;
+                    
+                    try {
+                        const response = await fetch(`/api/posts/${postId}/like`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            
+                            this.dataset.liked = data.liked;
+                            
+                            const icon = this.querySelector('.like-icon');
+                            const count = this.querySelector('.like-count');
+                            const text = this.querySelector('.like-text');
+                            
+                            icon.textContent = data.liked ? '❤️' : '🤍';
+                            count.textContent = data.likeCount;
+                            text.textContent = data.likeCount === 1 ? 'like' : 'likes';
+                            
+                            if (data.liked) {
+                                this.classList.add('liked');
+                            } else {
+                                this.classList.remove('liked');
+                            }
+                            
+                            this.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                this.style.transform = 'scale(1)';
+                            }, 100);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    } finally {
+                        this.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
